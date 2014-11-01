@@ -10,8 +10,9 @@
 \directlua{%
   local extensionstring = "\latexmark@extensions"
   local extensions = {}
-  for _,ex in ipairs(string.explode(extensionstring)) do
+  for _,ex in ipairs(string.explode(extensionstring,",")) do
     local ex = ex:gsub(" ","")
+    print("use extension", ex)
     extensions[ex] = true
   end
   % if no extensions are specified, delete the table, so default extensions
