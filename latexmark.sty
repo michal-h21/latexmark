@@ -2,9 +2,23 @@
 
 \RequirePackage{luatexbase}
 
+\RequirePackage{kvoptions}
+\DeclareStringOption{extensions}
+\DeclareStringOption{template}
+\ProcessKeyvalOptions*
+
 \directlua{%
+  local extensionstring = "\latexmark@extensions"
+  local extensions = {}
+  for _,ex in ipairs(string.explode(extensionstring)) do
+    local ex = ex:gsub(" ","")
+    extensions[ex] = true
+  end
+  % if no extensions are specified, delete the table, so default extensions
+  % could be used
   latexmark = require "latexmark"
-  latexmark.init()
+  latexmark.init(extensions)
+  latexmark.template("\latexmark@template")
 }
 
 
@@ -14,6 +28,20 @@
     luatexbase.remove_from_callback("process_input_buffer", "latexmark")
     latexmark.process()
 }}
+
+\newcommand\markdownfile[1]{%
+  \directlua{%
+    local f = io.open("\luatexluaescapestring{#1}","r")
+    if not f then 
+      print('latexmark warning: file "#1" cannot be found') 
+    else
+      local lines = f:read("*all")
+      latexmark.callback(lines)
+      f:close()
+      latexmark.process()
+    end
+  }
+}
 
 \endinput
 
