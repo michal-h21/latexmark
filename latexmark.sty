@@ -1,0 +1,19 @@
+\ProvidesPackage{latexmark}
+
+\RequirePackage{luatexbase}
+
+\directlua{%
+  latexmark = require "latexmark"
+  latexmark.init()
+}
+
+
+\newenvironment{latexmark}
+{\directlua{luatexbase.add_to_callback("process_input_buffer",latexmark.callback,"latexmark")}}
+{\directlua{%
+    luatexbase.remove_from_callback("process_input_buffer", "latexmark")
+    latexmark.process()
+}}
+
+\endinput
+
