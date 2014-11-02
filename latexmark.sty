@@ -10,14 +10,15 @@
 
 \directlua{%
   local extensionstring = "\latexmark@extensions"
-  local extensions = {}
-  for _,ex in ipairs(string.explode(extensionstring,",")) do
-    local ex = ex:gsub(" ","")
-    print("use extension", ex)
-    extensions[ex] = true
+  local extensions 
+  if string.len(extensionstring) > 0 then
+  %local extensions = {}
+    extensions= string.explode(extensionstring,",")
   end
-  % if no extensions are specified, delete the table, so default extensions
-  % could be used
+  %for _,ex in ipairs() do
+  %  local ex = ex:gsub(" ","")
+  %  extensions[ex] = true
+  %end
   latexmark = require "latexmark"
   latexmark.init(extensions)
   latexmark.save_template("\latexmark@template")

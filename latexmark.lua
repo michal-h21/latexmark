@@ -20,9 +20,16 @@ writer.definitionlist= function(items)
     local contents = util.intersperse(buffer, "\n")
     return {"\\begin{description}\n",contents,"\n\\end{description}"}
  end
+
 latexmark.init = function(extensions)
-   local extensions = next(extensions) ~= nil and extensions or { smart = true, definition_lists=true}
-   latexmark.parser = lunamark.reader.markdown.new(writer, extensions)
+   local extensions = extensions or {}
+   local usedextensions = {}
+   extensions = #extensions > 0  and extensions or { "smart", "definition_lists"}
+   for _,k in pairs(extensions) do 
+     print("latexmark extension:", k) 
+     usedextensions[k] = true
+   end
+   latexmark.parser = lunamark.reader.markdown.new(writer, usedextensions)
 end
 
 latexmark.save_template = function(tpl)
