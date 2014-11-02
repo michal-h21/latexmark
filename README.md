@@ -45,3 +45,17 @@ document
      \markdownfile{filename}
 
 include a markdown file `filename`.
+
+# Tips
+
+
+- Text converted from markdown to \LaTeX\ is printed to the terminal, so you may  inspect possible conversion problem here.
+- For conversion to html, use [make4ht](https://github.com/michal-h21/make4ht):
+
+
+    make4ht -l filename
+
+  note that `tex4ht` is used for the conversion and `fontspec` package 
+  is unsupported
+
+
