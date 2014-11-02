@@ -5,6 +5,7 @@
 \RequirePackage{kvoptions}
 \DeclareStringOption{extensions}
 \DeclareStringOption{template}
+\DeclareBoolOption{document}
 \ProcessKeyvalOptions*
 
 \directlua{%
@@ -19,16 +20,24 @@
   % could be used
   latexmark = require "latexmark"
   latexmark.init(extensions)
-  latexmark.template("\latexmark@template")
+  latexmark.save_template("\latexmark@template")
 }
 
-
-\newenvironment{latexmark}
-{\directlua{luatexbase.add_to_callback("process_input_buffer",latexmark.callback,"latexmark")}}
-{\directlua{%
+\newcommand\latexmark@start{\directlua{luatexbase.add_to_callback("process_input_buffer",latexmark.callback,"latexmark")}}
+\newcommand\latexmark@end{\directlua{%
     luatexbase.remove_from_callback("process_input_buffer", "latexmark")
     latexmark.process()
 }}
+
+\iflatexmark@document
+\AtBeginDocument{%
+  \directlua{}
+}
+\fi
+
+\newenvironment{latexmark}
+{\latexmark@start}
+{\latexmark@end}
 
 \newcommand\markdownfile[1]{%
   \directlua{%
