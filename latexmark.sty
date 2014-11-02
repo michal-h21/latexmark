@@ -31,8 +31,10 @@
 
 \iflatexmark@document
 \AtBeginDocument{%
-  \directlua{}
+  \latexmark@start
+  \directlua{latexmark.end_env = '\noexpand\\end{document}'}
 }
+\AtEndDocument{\latexmark@end}
 \fi
 
 \newenvironment{latexmark}
