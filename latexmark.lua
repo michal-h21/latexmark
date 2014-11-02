@@ -26,7 +26,6 @@ latexmark.init = function(extensions)
    local usedextensions = {}
    extensions = #extensions > 0  and extensions or { "smart", "definition_lists"}
    for _,k in pairs(extensions) do 
-     print("latexmark extension:", k) 
      usedextensions[k] = true
    end
    latexmark.parser = lunamark.reader.markdown.new(writer, usedextensions)
@@ -47,8 +46,8 @@ end
 
 latexmark.end_env = "%s*\\end{latexmark}"
 local buffer = {}
-latexmark.callback = function(buf)
-  if buf:match(latexmark.end_env) then
+latexmark.callback = function(buf,no_env)
+  if buf:match(latexmark.end_env) and no_env==nil then
     --local ret =  latexmark.process() 
     --table.insert(ret, buf)
     return ret
@@ -60,16 +59,16 @@ end
 latexmark.process = function()
   local body, metadata = latexmark.parser(table.concat(buffer,"\n"))
   local template = latexmark.template or "$body"
-  print("template", template)
   -- erase current buffer
   buffer = {}
   metadata = metadata or {}
-  for k,v in pairs(metadata) do
+  --[[ for k,v in pairs(metadata) do
     print("meta",k,v)
     for i, j in pairs(v) do
       print(i,j)
     end
   end
+  --]]
   metadata.body = body
   result = cosmo.fill(template, metadata)
   local lines = string.explode(result,"\n")

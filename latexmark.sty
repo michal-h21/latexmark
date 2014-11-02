@@ -9,6 +9,8 @@
 \ProcessKeyvalOptions*
 
 \directlua{%
+  unpack = unpack or table.unpack
+  loadstring = loadstring or load
   local extensionstring = "\latexmark@extensions"
   local extensions 
   if string.len(extensionstring) > 0 then
@@ -49,7 +51,7 @@
       print('latexmark warning: file "#1" cannot be found') 
     else
       local lines = f:read("*all")
-      latexmark.callback(lines)
+      latexmark.callback(lines, true)
       f:close()
       latexmark.process()
     end
