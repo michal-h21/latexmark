@@ -1,4 +1,4 @@
-\ProvidesPackage{latexmark}
+\ProvidesPackage{latexmarkdn}
 
 \RequirePackage{luatexbase}
 
@@ -11,7 +11,7 @@
 \directlua{%
   unpack = unpack or table.unpack
   loadstring = loadstring or load
-  local extensionstring = "\latexmark@extensions"
+  local extensionstring = "\latexmarkdn@extensions"
   local extensions 
   if string.len(extensionstring) > 0 then
   %local extensions = {}
@@ -21,9 +21,9 @@
   %  local ex = ex:gsub(" ","")
   %  extensions[ex] = true
   %end
-  latexmark = require "latexmark"
+  latexmark = require "latexmarkdn"
   latexmark.init(extensions)
-  latexmark.save_template("\latexmark@template")
+  latexmark.save_template("\latexmarkdn@template")
 }
 
 \newcommand\latexmark@start{\directlua{luatexbase.add_to_callback("process_input_buffer",latexmark.callback,"latexmark")}}
@@ -32,7 +32,7 @@
     latexmark.process()
 }}
 
-\iflatexmark@document
+\iflatexmarkdn@document
 \AtBeginDocument{%
   \latexmark@start
   \directlua{latexmark.end_env = '\noexpand\\end{document}'}

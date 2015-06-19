@@ -21,7 +21,7 @@ install:
 
 # Usage
 
-    \usepackage[options]{latexmark}
+    \usepackage[options]{latexmarkdn}
 
 ## Possible options
 
