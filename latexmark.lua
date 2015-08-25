@@ -11,6 +11,7 @@ loadstring = loadstring or load
 writer.string = function(s) return s end
 latexmark.template = nil 
 
+
 writer.definitionlist= function(items)
     local buffer = {}
     for _,item in ipairs(items) do

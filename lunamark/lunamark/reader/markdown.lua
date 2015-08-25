@@ -16,6 +16,7 @@ local expand_tabs_in_line = util.expand_tabs_in_line
 local unicode = require("unicode")
 local utf8 = unicode.utf8
 
+
 local M = {}
 
 local rope_to_string = util.rope_to_string
@@ -197,6 +198,14 @@ function M.new(writer, options)
   local newline                = P("\n")
   local nonspacechar           = any - spacing
   local tightblocksep          = P("\001")
+  -- mtable must be global, because we approached Lua limit for local variables
+  mtable                 = {}
+  dolarchar                     = P("$")
+  mtable.doubledolar            = P("$$")
+  mtable.inlinemathstart        = P("\\(")
+  mtable.inlinemathend          = P("\\)")
+  mtable.displaymathstart       = P("\\[")
+  mtable.displaymathend          = P("\\]")
 
   local specialchar
   if options.smart then
@@ -379,6 +388,14 @@ function M.new(writer, options)
   else
     NoteBlock = fail
   end
+
+
+  ------------------------------------------------------------------------------
+  -- Helpers for math
+  ------------------------------------------------------------------------------
+  
+  --mtable.mathstart = mtable.dolarchar + mtable.doubledolar  + mtable.inlinemathstart + mtable.displaymathstart
+  --mtable.mathend   = mtable.dolarchar + mtable.doubledolar + mtable.inlinemathend + mtable.displaymathend
 
   ------------------------------------------------------------------------------
   -- Helpers for links and references
@@ -618,6 +635,15 @@ function M.new(writer, options)
       return (starter * #nonspacechar * Ct(p * (p - ender2)^0) * ender2)
   end
 
+  -- local Math   = ( between(Inline, mtable.mathstart, mtable.mathend) ) / writer.string 
+  local Math   = dolarchar * Ct(Inline * (Inline - dolarchar)^0) * dolarchar / function(a) 
+    print("Máme $: ", a)
+    return writer.string(a)
+  end
+  -- between(Inline,dolarchar, dolarchar)  / function(a) print("ale", a) 
+   -- writer.string(a)
+  -- end
+  print("rrrr",dolarchar, Math)
   local Strong = ( between(Inline, doubleasterisks, doubleasterisks)
                  + between(Inline, doubleunderscores, doubleunderscores)
                  ) / writer.strong
@@ -625,6 +651,7 @@ function M.new(writer, options)
   local Emph   = ( between(Inline, asterisk, asterisk)
                  + between(Inline, underscore, underscore)
                  ) / writer.emphasis
+
 
   local urlchar = anyescaped - newline - more
 
@@ -922,6 +949,7 @@ function M.new(writer, options)
                             + V("Space")
                             + V("Endline")
                             + V("UlOrStarLine")
+                            + V("Math")
                             + V("Strong")
                             + V("Emph")
                             + V("NoteRef")
@@ -939,6 +967,7 @@ function M.new(writer, options)
       Str                   = Str,
       Space                 = Space,
       Endline               = Endline,
+      Math                  = Math,
       UlOrStarLine          = UlOrStarLine,
       Strong                = Strong,
       Emph                  = Emph,
