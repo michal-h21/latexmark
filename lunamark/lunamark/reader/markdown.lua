@@ -121,7 +121,7 @@ function M.new(writer, options)
     function(str)
       local res = lpegmatch(blocks, str)
       if res == nil
-        then error(format("parse_blocks failed on:\n%s", str:sub(1,20)))
+        then error(format("parse_blocks failed on:\n%s", str:sub(-50)))
         else return res
         end
     end

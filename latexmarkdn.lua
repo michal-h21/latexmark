@@ -11,6 +11,35 @@ loadstring = loadstring or load
 writer.string = function(s) return s end
 latexmark.template = nil 
 
+local escaped = {
+     ["{"] = "\\{",
+     ["}"] = "\\}",
+     ["$"] = "\\$",
+     ["%"] = "\\%",
+     ["&"] = "\\&",
+     ["_"] = "\\_",
+     ["#"] = "\\#",
+     ["^"] = "\\^{}",
+     ["\\"] = "\\char92{}",
+     ["~"] = "\\char126{}",
+     ["|"] = "\\char124{}",
+     ["<"] = "\\char60{}",
+     [">"] = "\\char62{}",
+     ["["] = "{[}", -- to avoid interpretation as optional argument
+     ["]"] = "{]}",
+   }
+
+local tex_escape = function(s)
+  local new = {}
+  for x in s:gmatch(".") do
+    print(escaped[x] or x)
+    new[#new+1] = escaped[x] or x
+  end
+  return table.concat(new)
+end
+
+writer.code = function(s) return string.format("\\texttt{%s}", tex_escape(s)) end
+
 writer.definitionlist= function(items)
     local buffer = {}
     for _,item in ipairs(items) do
